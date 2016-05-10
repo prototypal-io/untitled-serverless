@@ -1,0 +1,17 @@
+{
+  "name": "untitled-serverless",
+  "version": "0.0.1",
+  "description": "",
+  "main": "server.js",
+  "dependencies": {
+    "pretender": "^1.1.0",
+    "route-recognizer": "^0.1.11"
+  },
+  "devDependencies": {},
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "start": "node server.js"
+  },
+  "author": "Erik Bryn",
+  "license": "MIT"
+}
