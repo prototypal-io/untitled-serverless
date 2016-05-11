@@ -13,3 +13,5 @@ server.routes(function() {
 });
 
 server.start(3000);
+
+console.log(server.toJSON());

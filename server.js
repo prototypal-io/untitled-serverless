@@ -17,6 +17,7 @@ function Server() {
   this.pretender = null;
   this.map = null;
   this.httpServer = http.createServer(this.handleRequest.bind(this));
+  this.routeDefinitions = [];
 }
 
 Server.prototype.routes = function(callback) {
@@ -24,9 +25,19 @@ Server.prototype.routes = function(callback) {
 };
 
 Server.prototype.start = function(port) {
-  this.pretender = new Pretender(this.map);
+  this.pretender = new Pretender();
+  this._executeDSL();
   this.pretender.unhandledRequest = this.unhandledRequest.bind(this);
   this.httpServer.listen(port);
+};
+
+Server.prototype._executeDSL = function() {
+  this.map.call(this);
+};
+
+Server.prototype.get = function(url, callback) {
+  this.routeDefinitions.push({method: 'GET', url: url});
+  this.pretender.get(url, callback);
 };
 
 Server.prototype.stop = function(port) {
@@ -56,4 +67,8 @@ Server.prototype.unhandledRequest = function(verb, path, request) {
   debugger;
 };
 
+
+Server.prototype.toJSON = function() {
+  return {routes: this.routeDefinitions};
+};
 module.exports = Server;
