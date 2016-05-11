@@ -14,7 +14,7 @@ PretenderRequest.prototype = {
 };
 
 function Server() {
-  this.pretender = null;
+  this.pretender = new Pretender();
   this.map = null;
   this.httpServer = http.createServer(this.handleRequest.bind(this));
   this.routeDefinitions = [];
@@ -22,11 +22,10 @@ function Server() {
 
 Server.prototype.routes = function(callback) {
   this.map = callback;
+  this._executeDSL();
 };
 
 Server.prototype.start = function(port) {
-  this.pretender = new Pretender();
-  this._executeDSL();
   this.pretender.unhandledRequest = this.unhandledRequest.bind(this);
   this.httpServer.listen(port);
 };
@@ -35,9 +34,22 @@ Server.prototype._executeDSL = function() {
   this.map.call(this);
 };
 
-Server.prototype.get = function(url, callback) {
-  this.routeDefinitions.push({method: 'GET', url: url});
-  this.pretender.get(url, callback);
+function verbify(method) {
+  return function(url, callback) {
+    this.addRoute(method, url, callback);
+  };
+}
+
+Server.prototype.get = verbify('GET');
+Server.prototype.post = verbify('POST');
+Server.prototype.put = verbify('PUT');
+Server.prototype['delete'] = verbify('DELETE');
+Server.prototype.patch = verbify('PATCH');
+Server.prototype.head = verbify('HEAD');
+
+Server.prototype.addRoute = function(method, url, callback) {
+  this.routeDefinitions.push({method: method, url: url});
+  this.pretender.register(method, url, callback);
 };
 
 Server.prototype.stop = function(port) {
