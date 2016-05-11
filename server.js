@@ -53,7 +53,7 @@ Server.prototype.addRoute = function(method, url, opts) {
   var handler = opts.with;
   this.routeDefinitions.push({method: method, url: url, module: moduleName, handler: handler});
   this.pretender.register(method, url, function() {
-    var moduleObj = require(path.join(process.cwd(), moduleName);
+    var moduleObj = require(path.join(process.cwd(), moduleName));
     return moduleObj[handler].apply(moduleObj, arguments);
   });
 };
