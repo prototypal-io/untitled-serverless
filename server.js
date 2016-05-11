@@ -35,8 +35,8 @@ Server.prototype._executeDSL = function() {
 };
 
 function verbify(method) {
-  return function(url, callback) {
-    this.addRoute(method, url, callback);
+  return function(url, opts) {
+    this.addRoute(method, url, opts);
   };
 }
 
@@ -47,9 +47,14 @@ Server.prototype['delete'] = verbify('DELETE');
 Server.prototype.patch = verbify('PATCH');
 Server.prototype.head = verbify('HEAD');
 
-Server.prototype.addRoute = function(method, url, callback) {
-  this.routeDefinitions.push({method: method, url: url});
-  this.pretender.register(method, url, callback);
+Server.prototype.addRoute = function(method, url, opts) {
+  var module = opts.from;
+  var handler = opts.with;
+  this.routeDefinitions.push({method: method, url: url, module: module, handler: handler});
+  this.pretender.register(method, url, function() {
+    var moduleObj = require('./' +module); 
+    return moduleObj[handler].apply(moduleObj, arguments);
+  });
 };
 
 Server.prototype.stop = function(port) {
