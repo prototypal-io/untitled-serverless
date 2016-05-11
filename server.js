@@ -1,5 +1,6 @@
 var http = require('http');
 var Pretender = require('./pretender');
+var path = require('path');
 
 function PretenderRequest(method, url) {
   this.method = method;
@@ -48,11 +49,11 @@ Server.prototype.patch = verbify('PATCH');
 Server.prototype.head = verbify('HEAD');
 
 Server.prototype.addRoute = function(method, url, opts) {
-  var module = opts.from;
+  var moduleName = opts.from;
   var handler = opts.with;
-  this.routeDefinitions.push({method: method, url: url, module: module, handler: handler});
+  this.routeDefinitions.push({method: method, url: url, module: moduleName, handler: handler});
   this.pretender.register(method, url, function() {
-    var moduleObj = require('./' +module); 
+    var moduleObj = require(path.join(process.cwd(), moduleName);
     return moduleObj[handler].apply(moduleObj, arguments);
   });
 };
