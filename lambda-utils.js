@@ -8,21 +8,21 @@ module.exports.buildRequest = function(event, context, cb) {
   req.body = event.body;
   req.cookies = {}; // TODO : Figure out how to get cookies from AWS Gateway
   req.fresh = true; // TODO : Does this apply in our context?
-  req.hostname = event.headers.Host;
-  //req.ip = event.headers["X-Forwarded-For"].split(", ")[0];
-  req.ips = event.headers["X-Forwarded-For"];
+  req.hostname = event.params.header.Host;
+  //req.ip = event.params.header["X-Forwarded-For"].split(", ")[0];
+  req.ips = event.params.header["X-Forwarded-For"];
   req.method = event.method;
   req.originalUrl = ""; // TODO : Figrure out how to reconstruct this
   req.params = event.params;
   req.path = event.baseUrl; // TODO : This isn't quite right...
-  req.protocol = event.headers["X-Forwarded-Proto"];
+  req.protocol = event.params.header["X-Forwarded-Proto"];
   req.query = event.query;
   req.route = null; // TODO : Does this apply to us?
   req.secure = req.protocol === 'https';
   req.signedCookies = {}; // TODO : ???
   req.stale = false; // TODO : Does this apply in our context?
   req.subdomains = []; // TODO: Does this apply?
-  req.xhr = event.headers["X-Requested-With"] === 'XMLHttpRequest';
+  req.xhr = event.params.header["X-Requested-With"] === 'XMLHttpRequest';
 
   // Methods
   /*
@@ -46,7 +46,7 @@ module.exports.buildRequest = function(event, context, cb) {
   };
 
   req.get = function get(field){
-    return event.headers[field];
+    return event.params.header[field];
   }
 
   req.is = function is(type){
