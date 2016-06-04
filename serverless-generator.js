@@ -32,6 +32,7 @@ function makeRouteDir(route){
 }
 
 function copyTemplate(route, template){
+  console.log(`copying template ${template}`)
   var destination = templateDestinationPath(route,template);
   var source = `serverless-templates/${template}`;
   fs.createReadStream(source).pipe(fs.createWriteStream(destination));
@@ -39,10 +40,25 @@ function copyTemplate(route, template){
 
 function copyTemplates(route){
   copyTemplate(route,'handler.js');
-  copyTemplate(route,'s-function.json');
   copyTemplate(route,'s-templates.yaml');
+  copyTemplate(route,'lambda-utils.js');
 }
 
+function updateSFunction(route){
+  var readPath = `serverless-templates/s-function.json`
+  var writePath = templateDestinationPath(route, 's-function.json');
+  var contents = fs.readFileSync(readPath, {encoding:"utf8"});
+  contents = contents.replace(/{{module}}/g,route.module);
+  contents = contents.replace(/{{method}}/g,route.method);
+  contents = contents.replace(/{{url}}/g,route.url);
+  fs.writeFileSync(writePath,contents);
+}
+
+function copyModule(route){
+  var destination = templateDestinationPath(route,'endpoint-logic.js');
+  var source = `${route.module}.js`;
+  fs.createReadStream(source).pipe(fs.createWriteStream(destination));
+}
 
 module.exports.generateRoute = function(route){
   console.log('in generateRoute -----------');
@@ -51,4 +67,6 @@ module.exports.generateRoute = function(route){
 
   preflight(route);
   copyTemplates(route);
+  updateSFunction(route);
+  copyModule(route);
 }
