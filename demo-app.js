@@ -1,11 +1,12 @@
 var Server = require('./server');
+var Router = require('./demo-router');
+
 var util = require('util');
 
 var server = new Server();
+var router = new Router();
 
-server.routes(function() {
-  this.get('/posts', {from: 'demo-app-posts', with: 'index'});
-});
+router.loadRoutes(server);
 
 server.start(3000);
 
