@@ -1,5 +1,5 @@
 {
-  "name": "{{module}}",
+  "name": "demo-app-posts",
   "runtime": "nodejs4.3",
   "description": "Serverless Lambda function for project: demo-app",
   "customName": false,
@@ -13,8 +13,8 @@
   },
   "endpoints": [
     {
-      "path": "{{url}}",
-      "method": "{{method}}",
+      "path": "/posts",
+      "method": "GET",
       "type": "AWS",
       "authorizationType": "none",
       "authorizerFunction": false,
