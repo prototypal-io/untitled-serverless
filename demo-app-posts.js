@@ -1,5 +1,6 @@
 module.exports = {
   index: function(req, res) {
-    return [200, {}, "ohai"];
+    res.status(200);
+    res.json({ message: "ohai"});
   }
 };
